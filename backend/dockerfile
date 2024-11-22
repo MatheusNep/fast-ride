@@ -1,21 +1,21 @@
-# Dockerfile para o backend
+# Usando uma imagem do Node.js
 FROM node:18
 
-# Define o diretório de trabalho dentro do container
+# Definindo o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia os arquivos necessários
-COPY package*.json ./
-COPY tsconfig.json ./
-
-# Instala as dependências
+# Copiar o package.json e package-lock.json
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copia o restante do projeto
+# Copiar todo o código do projeto
 COPY . .
 
-# Expõe a porta da API
+# Instalar as dependências de desenvolvimento, como o `nodemon`
+RUN npm install --only=development
+
+# Expor a porta 8080
 EXPOSE 8080
 
-# Comando para iniciar o servidor
-CMD ["npm", "run", "start"]
+# Rodar o servidor com nodemon
+CMD ["npm", "run", "dev"]

@@ -1,23 +1,18 @@
-# Dockerfile para o frontend
-FROM node:18 AS build
+# Usando a imagem do Node.js
+FROM node:18
 
-# Define o diretório de trabalho dentro do container
+# Definindo o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copia os arquivos necessários
-COPY package*.json ./
-COPY tsconfig.json ./
-
-# Instala as dependências
+# Copiar o package.json e package-lock.json
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copia o restante do projeto e realiza o build
+# Copiar o código do projeto
 COPY . .
-RUN npm run build
 
-# Produção
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-
+# Expor a porta 80
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+
+# Rodar o servidor de desenvolvimento do React
+CMD ["npm", "start"]
