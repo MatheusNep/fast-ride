@@ -1,36 +1,25 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import { Client, DirectionsResponse } from '@googlemaps/google-maps-services-js';
+import { Drivers } from '../schemas/drivers';
 
 dotenv.config({ path: './.env' });
 
-interface Drivers {
-  id: number;
-  name: string;
-  description: string;
-  vehicle: string;
-  review: {
-    rating: number;
-    comment: string;
-  };
-  value: number;
-  limit: number;
-}
-
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || '';
+const client = new Client({});
 
 export const estimateRide = async (req: Request, res: Response) => {
-  const { origin, destination, userId } = req.body;
+  const { origin, destination, costumer_id } = req.body;
 
-  console.log(origin, destination, userId);
+  console.log(origin, destination, costumer_id);
 
-  if (!origin || !destination || !userId) {
-    return res.status(400).json({ error: 'Missing required fields' });
+  if (!origin || !destination || !costumer_id) {
+    return res.status(400).json({ error: 'Os dados fornecidos no corpo da requisição são inválidos' });
   }
   
   try {
-    const googleResponse = await axios.get(
-      `https://maps.googleapis.com/maps/api/directions/json`, {
+    const googleResponse = await client.directions({
         params: {
           origin: origin,
           destination: destination,
@@ -39,19 +28,18 @@ export const estimateRide = async (req: Request, res: Response) => {
       }
     );
 
-    const { routes } = googleResponse.data;
-    console.log(googleResponse)
-    if (!routes || routes.length === 0) {
-      return res.status(400).json({ error: 'No routes found' });
+    const { data }: DirectionsResponse = googleResponse;
+
+    if (!data.routes || data.routes.length === 0) {
+      return res.status(400).json({ error: 'Os dados fornecidos no corpo da requisição são inválidos' });
     }
 
-    const route = routes[0];
+    const route = data.routes[0];
     const distance = route.legs[0].distance.value/1000; 
     const duration = route.legs[0].duration.text;
     const routeResponse = route;
 
-    // todo: distance validation
-    const options: Drivers[] = [
+    const drivers: Drivers[] = [
       {
         id: 1,
         name: 'Homer Simpson',
@@ -90,10 +78,24 @@ export const estimateRide = async (req: Request, res: Response) => {
       },
     ];
 
+    const options: Drivers[] = []
+
+    drivers.forEach((driver) => {
+      if(distance >= driver.limit){
+        options.push(driver)
+      }
+    })
+
     return res.status(200).json({
-      origin,
-      destination,
-      distance,
+      origin:{
+        latitude: route.legs[0].start_location.lat,
+        longitude: route.legs[0].start_location.lng
+      },
+      destination:{
+        latitude: route.legs[0].end_location.lat,
+        longitude: route.legs[0].end_location.lng
+      },
+      distance: `${distance} km`,
       duration,
       options,
       routeResponse
