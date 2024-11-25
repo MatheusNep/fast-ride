@@ -4,6 +4,8 @@ import './App.css';
 import './shared/styles/index.css';
 import { GoogleMap, LoadScript, DirectionsRenderer } from "@react-google-maps/api";
 import DirectionsForm from './shared/components/DirectionsForm';
+import { useForm } from 'react-hook-form';
+import { formSchema, FormData } from './shared/schemas/directionsFormSchema';
 
 interface LocationData {
   id: string;
@@ -12,58 +14,59 @@ interface LocationData {
 }
 
 function App() {
-  const [googleApiKey, setGoogleApiKey] = useState<string>(process.env.REACT_APP_GOOGLE_API_KEY!)
-
+  const [showMap, setShowMap] = useState<boolean>(false);
+  const { register, handleSubmit, reset } = useForm<FormData>();
   const [locationData, setLocationData] = useState<LocationData | null>(null);
-  const [directions, setDirections] = useState<any>();
+  const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
   
-  const calculateRoute = async (locationData: LocationData) => {
-    const { DirectionsService } = window.google.maps;
-
-    const directionsService = new DirectionsService();
-    directionsService.route(
-      {
-        origin: locationData.startAddress,
-        destination: locationData.destinationAddress,
-        travelMode: window.google.maps.TravelMode.DRIVING,
-      },
-      (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
-          setDirections(result);
-        } else {
-          console.error("Erro ao buscar rotas:", status);
-        }
-      }
-    );
-  };
-
-  const handleFormSubmit = (data: LocationData) => {
+  const [error, setError] = useState<string | null>(null);
+  
+  const handleFormSubmit = async (data: LocationData) => {
     console.log("Dados recebidos:", data);
+    setError(null); // Reset errors
+    setDirectionsResponse(null); // Reset directions
+    
+    const directionsService = new google.maps.DirectionsService();
+    
+    try {
+      const result: any = await directionsService.route({
+        origin: data.startAddress,
+        destination: data.destinationAddress,
+        travelMode: google.maps.TravelMode.DRIVING,
+      });
+
+      if (result?.status === "OK") {
+        setDirectionsResponse(result); // Update map with route
+        reset(); // Clear the form
+      } else {
+        throw new Error("Rota não encontrada. Verifique os endereços e tente novamente.");
+      }
+    } catch (err: any) {
+      console.log(err)
+      setError(err.message || "Erro ao buscar rota.");
+    }
     setLocationData(data);
-    calculateRoute(data);
+    setShowMap(true);
   };
 
-  useEffect(() => {
-    console.log(directions)
-    console.log(process.env)
-    if(process.env.REACT_APP_GOOGLE_API_KEY){
-      setGoogleApiKey(process.env.REACT_APP_GOOGLE_API_KEY)
-    }
-  },[directions, process.env])
   return (
     <div className="w-full h-full flex flex-col justify-center items-center bg-black/20 z-20">
-      <DirectionsForm onSubmit={handleFormSubmit} />      
-      <LoadScript googleMapsApiKey={googleApiKey}>
-        <div className="flex flex-col items-center w-3/4">
+      <DirectionsForm onSubmit={handleFormSubmit} visibility={!showMap} />
+      {error && <div className="error-message">{error}</div>}
+         
+      <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY!}>
+        <div className={`flex flex-col items-center w-3/4 ${showMap ? '' : 'hidden'}`}>
           <GoogleMap
             mapContainerStyle={{ width: "100%", height: "500px" }}
             center={{ lat: -23.55052, lng: -46.633308 }} 
             zoom={12}
           >
-            {directions && <DirectionsRenderer directions={directions} />}
+            {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
           </GoogleMap>
         </div>
       </LoadScript>
+         
+      
     </div>
   );
 }

@@ -11,6 +11,10 @@ RUN npm install
 # Copiar todo o código do projeto
 COPY . .
 
+# Passa a variável API_KEY
+ARG GOOGLE_API_KEY
+ENV GOOGLE_API_KEY=$GOOGLE_API_KEY
+
 # Instalar as dependências de desenvolvimento, como o `nodemon`
 RUN npm install --only=development
 

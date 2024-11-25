@@ -8,6 +8,10 @@ services:
       - "80:80"
     depends_on:
       - backend
+    env_file:
+      - .env
+    environment:
+      - REACT_APP_GOOGLE_API_KEY=${GOOGLE_API_KEY}
     volumes:
     - ./frontend:/app
     - /app/node_modules
@@ -19,6 +23,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     volumes:
     - ./backend:/app
     - /app/node_modules

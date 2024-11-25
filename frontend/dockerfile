@@ -11,6 +11,10 @@ RUN npm install
 # Copiar o código do projeto
 COPY . .
 
+# Passa a variável API_KEY
+ARG GOOGLE_API_KEY
+ENV REACT_APP_GOOGLE_API_KEY=$GOOGLE_API_KEY
+
 # Expor a porta 80
 EXPOSE 80
 
