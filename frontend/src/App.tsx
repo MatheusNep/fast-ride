@@ -10,6 +10,7 @@ import { RideEstimateResponse, RideRequest } from './shared/schemas/rideEstimate
 import { convertDirectionsResponseToDirectionsResult } from './shared/utils/convertDirectionsResponseToDirectionsResult';
 import DriverOptions from './shared/components/DriverOptions';
 import { getRideConfirm } from './shared/api/ride/rideConfirm';
+import RideHist from './shared/components/RideHist';
 
 interface LocationData {
   id: string;
@@ -19,7 +20,7 @@ interface LocationData {
 
 function App() {
   const [showMap, setShowMap] = useState<boolean>(false);
-  const { getValues, register, handleSubmit, reset } = useForm<FormData>();
+  const { getValues, register, handleSubmit, reset } = useForm<FormData>();  
   const [locationData, setLocationData] = useState<RideEstimateResponse | null>(null);
   const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
   const [formData, setFormData] = useState<{ id: string, startAddress: string, destinationAddress: string}>();
@@ -70,7 +71,8 @@ function App() {
 
   return (
     <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY!} libraries={['geometry', 'drawing']}>
-      <div className="w-full h-full flex flex-col justify-center items-center bg-black/20 z-20">
+      <div className="w-full h-full flex flex-col justify-center items-center bg-black/20 z-20">        
+        <RideHist></RideHist>
         <DirectionsForm onSubmit={handleFormSubmit} visibility={!showMap}/>
         {error && <div className="error-message">{error}</div>}        
         <div className={`flex flex-col items-center w-3/4 ${showMap ? '' : 'hidden'} `}>

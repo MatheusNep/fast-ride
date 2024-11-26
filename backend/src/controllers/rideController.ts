@@ -126,3 +126,37 @@ export const saveRide = async (req: Request, res: Response) => {
   }  
  
 };
+
+export const getRides = async (req: Request, res: Response) => {
+  const { customer_id } = req.params;
+
+  const { driver_id } = req.query;
+
+  if(!customer_id && !driver_id){
+    return res.status(401).json({error_code: "INVALID_DATA", error: 'Os dados fornecidos no corpo da requisição são inválidos' });
+  }
+
+  if(driver_id && parseInt(driver_id as string) != 0){
+    const drivers = await Driver.findOne({id: driver_id})
+    if(!drivers){
+      return res.status(400).json({error_code: "INVALID_DRIVER", error: 'Motorista invalido' });
+    }
+  }
+
+  const ridesFind = await Ride.find(
+    {
+      customer_id: customer_id,
+      driver_id: driver_id as string
+    }
+  )
+
+  if(ridesFind.length > 0){
+    return {
+      customer_id: customer_id,
+      rides: ridesFind
+    }
+  }else{ 
+    return res.status(404).json({error_code: "NO_RIDES_FOUND", error: 'Nenhum registro encontrado' });     
+  }  
+ 
+};

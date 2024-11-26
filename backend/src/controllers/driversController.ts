@@ -16,6 +16,16 @@ export const checkDrivers = async () =>{
     }
 }
 
+export const getDrivers = async (req: Request, res: Response) => {  
+  try {
+    const drivers = await Driver.find();
+    return res.status(200).json(drivers);
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro ao buscar motoristas.', details: error });
+  }
+ 
+};
+
 const drivers = [
     {
       id: 1,
