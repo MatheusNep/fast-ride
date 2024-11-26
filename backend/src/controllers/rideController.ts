@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import axios from 'axios';
 import dotenv from 'dotenv';
-import { Client, DirectionsResponse } from '@googlemaps/google-maps-services-js';
+import { Client, DirectionsResponse, TravelMode } from '@googlemaps/google-maps-services-js';
 import { Drivers } from '../schemas/drivers';
 
 dotenv.config({ path: './.env' });
@@ -19,17 +18,18 @@ export const estimateRide = async (req: Request, res: Response) => {
   }
   
   try {
-    const googleResponse = await client.directions({
+    const googleResponse = await client.directions({    
         params: {
           origin: origin,
           destination: destination,
-          key: GOOGLE_API_KEY
-        }
+          key: GOOGLE_API_KEY,
+          mode: TravelMode.driving
+        },
       }
     );
 
     const { data }: DirectionsResponse = googleResponse;
-
+    
     if (!data.routes || data.routes.length === 0) {
       return res.status(400).json({ error: 'Os dados fornecidos no corpo da requisição são inválidos' });
     }
@@ -37,7 +37,6 @@ export const estimateRide = async (req: Request, res: Response) => {
     const route = data.routes[0];
     const distance = route.legs[0].distance.value/1000; 
     const duration = route.legs[0].duration.text;
-    const routeResponse = route;
 
     const drivers: Drivers[] = [
       {
@@ -98,7 +97,20 @@ export const estimateRide = async (req: Request, res: Response) => {
       distance: `${distance} km`,
       duration,
       options,
-      routeResponse
+      routeResponse: 
+      {
+        ...data,        
+        geocoded_waypoints: data.geocoded_waypoints,
+        request: {
+          origin: {
+            query: origin
+          },
+          destination: {
+            query: destination
+          },
+          travelMode: TravelMode.driving
+        }
+      }
     });
   } catch (error) {
     console.error('Error fetching directions:', error);

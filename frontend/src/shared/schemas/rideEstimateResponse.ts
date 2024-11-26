@@ -1,7 +1,8 @@
+import { DirectionsResponseData } from '@googlemaps/google-maps-services-js';
 interface Location {
     latitude: number;
     longitude: number;
-  }
+}
   
 export interface RideEstimateResponse {
     origin: Location;
@@ -18,6 +19,7 @@ export interface RideEstimateResponse {
         comment: string;
       };
       value: number;
+      limit: number;
     }>;
-    routeResponse: object;
+    routeResponse: DirectionsResponseData & {request: any};
 }

@@ -4,7 +4,7 @@ import axiosInstance from "./axios";
 export const getRideEstimate = async (
   origin: string,
   destination: string,
-  userId: number
+  costumer_id: number
 ): Promise<RideEstimateResponse> => {
   try {
     const response = await axiosInstance.post<RideEstimateResponse>(
@@ -12,10 +12,9 @@ export const getRideEstimate = async (
       {
         origin,
         destination,
-        userId,
+        costumer_id,
       }
     );
-
     return response.data;
   } catch (error) {
     console.error('Error fetching ride estimate:', error);

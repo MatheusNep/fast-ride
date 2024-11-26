@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema, FormData } from '../schemas/directionsFormSchema';
 
@@ -22,10 +21,10 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
         <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-col gap-4 w-3/4 ${visibility ? '' : 'hidden'}`}>
             <div className='h-14 mb-3'>
                 <label htmlFor="id" className="block text-lg font-medium text-gray-700">
-                    ID
+                    ID do usuário
                 </label>
                 <input
-                    type="text"
+                    type="number"
                     id="id"
                     {...register("id")}
                     className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
