@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const formSchema = z.object({
     id: z.string().refine((val) => val.trim() !== "", {
-        message: "ID é obrigatório.",
+        message: "ID do usuário é obrigatório.",
     }),
     startAddress: z.string().refine((val) => val.trim() !== "", {
         message: "O endereço de origem é obrigatório.",

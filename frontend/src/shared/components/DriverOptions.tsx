@@ -3,7 +3,7 @@ import { FaStar } from "react-icons/fa";
 
 type DriverOptionsProps = {
     drivers: Drivers[]
-    onSelectDriver: (id: number) => void;
+    onSelectDriver: (id: number, name: string, value: number) => void;
 }
 
 const DriverOptions = ({drivers, onSelectDriver}: DriverOptionsProps) => {
@@ -37,7 +37,7 @@ const DriverOptions = ({drivers, onSelectDriver}: DriverOptionsProps) => {
                         <span className="font-medium">Preço:</span> R${item.value.toFixed(2).replace(".", ",")}
                     </p>
                     <button
-                        onClick={() => onSelectDriver(item.id)}
+                        onClick={() => onSelectDriver(item.id, item.name, item.value)}
                         className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
                     >
                         Select

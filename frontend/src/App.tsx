@@ -5,10 +5,11 @@ import { DirectionsRenderer, GoogleMap, LoadScript } from "@react-google-maps/ap
 import DirectionsForm from './shared/components/DirectionsForm';
 import { useForm } from 'react-hook-form';
 import {  FormData } from './shared/schemas/directionsFormSchema';
-import { getRideEstimate } from './shared/api/rideEstimate';
-import { RideEstimateResponse } from './shared/schemas/rideEstimateResponse';
+import { getRideEstimate } from './shared/api/ride/rideEstimate';
+import { RideEstimateResponse, RideRequest } from './shared/schemas/rideEstimateResponse';
 import { convertDirectionsResponseToDirectionsResult } from './shared/utils/convertDirectionsResponseToDirectionsResult';
 import DriverOptions from './shared/components/DriverOptions';
+import { getRideConfirm } from './shared/api/ride/rideConfirm';
 
 interface LocationData {
   id: string;
@@ -18,23 +19,22 @@ interface LocationData {
 
 function App() {
   const [showMap, setShowMap] = useState<boolean>(false);
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  const { getValues, register, handleSubmit, reset } = useForm<FormData>();
   const [locationData, setLocationData] = useState<RideEstimateResponse | null>(null);
   const [directionsResponse, setDirectionsResponse] = useState<google.maps.DirectionsResult | null>(null);
+  const [formData, setFormData] = useState<{ id: string, startAddress: string, destinationAddress: string}>();
   
   const [error, setError] = useState<string | null>(null);
   
   const handleFormSubmit = async (data: LocationData) => {
-    console.log("Dados recebidos:", data);
     setError(null);
     setDirectionsResponse(null);
-    
+    setFormData(data)
     try {
-      const getRideEstimateResult: RideEstimateResponse = await getRideEstimate(data.startAddress, data.destinationAddress, parseInt(data.id))
+      const getRideEstimateResult: RideEstimateResponse = await getRideEstimate(data.startAddress, data.destinationAddress, data.id)
       if (getRideEstimateResult) {
         let convertedToDirectionsResult = convertDirectionsResponseToDirectionsResult(getRideEstimateResult.routeResponse);
-        setDirectionsResponse(convertedToDirectionsResult);
-        reset();
+        setDirectionsResponse(convertedToDirectionsResult);        
         setLocationData(getRideEstimateResult);
         setShowMap(true);
       } else {
@@ -46,8 +46,26 @@ function App() {
     }    
   };
 
-  const handleSelectDriver = (id: number) => {
-    alert(`Selected item with ID: ${id}`);
+  const handleSelectDriver = async (id: number, name: string, value: number) => {
+
+    if(formData && locationData?.destination && locationData?.destination && locationData?.distance){
+      const rideRequest: RideRequest = {
+        customer_id: formData?.id,
+        origin: formData?.startAddress,
+        destination: formData?.destinationAddress,
+        distance: locationData?.distance,
+        duration: locationData?.duration,
+        driver: {
+          id,
+          name
+        }, 
+        value
+      }
+
+      const saveRide = await getRideConfirm(rideRequest);
+      reset();
+    }
+    
   };
 
   return (

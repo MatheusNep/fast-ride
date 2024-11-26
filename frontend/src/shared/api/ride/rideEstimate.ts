@@ -1,10 +1,10 @@
-import { RideEstimateResponse } from "../schemas/rideEstimateResponse";
-import axiosInstance from "./axios";
+import { RideEstimateResponse } from "../../schemas/rideEstimateResponse";
+import axiosInstance from "../axios";
 
 export const getRideEstimate = async (
   origin: string,
   destination: string,
-  costumer_id: number
+  costumer_id: string
 ): Promise<RideEstimateResponse> => {
   try {
     const response = await axiosInstance.post<RideEstimateResponse>(

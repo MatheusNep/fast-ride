@@ -24,7 +24,7 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
                     ID do usuário
                 </label>
                 <input
-                    type="number"
+                    type="text"
                     id="id"
                     {...register("id")}
                     className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
