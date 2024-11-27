@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { Client, DirectionsResponse, TravelMode } from '@googlemaps/google-maps-services-js';
-import Ride from '../schemas/ride';
+import Ride, { rideMock } from '../schemas/ride';
 import Driver, { DriverInterface } from '../schemas/driver';
 
 
@@ -16,7 +16,11 @@ export const estimateRide = async (req: Request, res: Response) => {
   console.log(origin, destination, costumer_id);
 
   if (!origin || !destination || !costumer_id) {
-    return res.status(400).json({ error: 'Os dados fornecidos no corpo da requisição são inválidos' });
+    return res.status(400).json({ error_code: "INVALID_DATA", error_description: 'Os dados fornecidos no corpo da requisição são inválidos' });
+  }
+
+  if(origin == destination){
+    return res.status(401).json({ error_code: "SAME_PLACE", error_description: 'Dados inválidos, origem precisa ser diferente do destino' });
   }
   
   try {
@@ -33,7 +37,7 @@ export const estimateRide = async (req: Request, res: Response) => {
     const { data }: DirectionsResponse = googleResponse;
     
     if (!data.routes || data.routes.length === 0) {
-      return res.status(400).json({ error: 'Os dados fornecidos no corpo da requisição são inválidos' });
+      return res.status(400).json({ error_code: "INVALID_DATA", error_description: 'Os dados fornecidos no corpo da requisição são inválidos' });
     }
 
     const route = data.routes[0];
@@ -98,8 +102,6 @@ export const saveRide = async (req: Request, res: Response) => {
 
   const checkRide =  new Ride(ride)
 
-  console.log(checkRide);
-
   const checkError = checkRide.validateSync();
 
   if(checkError){
@@ -143,20 +145,47 @@ export const getRides = async (req: Request, res: Response) => {
     }
   }
 
-  const ridesFind = await Ride.find(
-    {
-      customer_id: customer_id,
-      driver_id: driver_id as string
-    }
-  )
+  let ridesFind;
 
+  if(parseInt(driver_id as string) == 0){
+    ridesFind = await Ride.find(
+      {
+        customer_id: customer_id
+      }
+    )
+  }else{
+    ridesFind = await Ride.find(
+      {
+        customer_id: customer_id,
+        "driver.id": parseInt(driver_id as string)
+      }
+    )
+  }
   if(ridesFind.length > 0){
-    return {
+    return res.status(200).json({
       customer_id: customer_id,
       rides: ridesFind
-    }
+    })
   }else{ 
     return res.status(404).json({error_code: "NO_RIDES_FOUND", error: 'Nenhum registro encontrado' });     
   }  
  
 };
+
+
+export const setMockRides = async () =>{
+  const rides = rideMock;
+  try{
+      const existRides = await Ride.find({})
+      if(existRides.length < 10){
+          const createRides = await Ride.insertMany(rides);
+          return console.log(createRides);
+      }else{
+          return console.log({message: "Drivers já Criados"})
+      }
+
+  } catch (error) {
+      return console.log({ error: 'Erro ao adicionar motoristas.', details: error });
+  }
+}
+

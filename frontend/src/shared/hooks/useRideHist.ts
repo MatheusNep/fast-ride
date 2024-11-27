@@ -5,8 +5,8 @@ import { defaultOptions } from "../utils/defaultOptions"
 
 type UseRideHistQueryArgs = {
   params:{
-    custumer_id?: string
-    driver_id?: number
+    customer_id: string
+    driver_id: number
   }  
   options?: UseQueryOptions<unknown, Error, RideHistResponse, ['RIDEHIST', string] >
 }
@@ -15,10 +15,11 @@ export const RIDEHIST = 'RIDEHIST'
 
 function useRideHist({ params, options}: UseRideHistQueryArgs) {
   const queryFn = async () => {
-    if(params.custumer_id == ''){
-        return []
+    console.log("PARAMS NO USERIDEHIST: ", params)
+    if(params.customer_id == ''){
+      return []
     }else {
-        return await getRideHist(params)
+      return await getRideHist(params)
     }    
   }
 

@@ -34,17 +34,17 @@ const RideHistForm = ({onSubmit, visibility=true}: RideHistFormProps) => {
                 <input
                     type="text"
                     id="id"
-                    {...register("custumer_id")}
+                    {...register("customer_id")}
                     className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
                     placeholder='Id'
                 />
-                {errors.custumer_id && <p className="text-red-600 text-lg">{errors.custumer_id.message}</p>}
+                {errors.customer_id && <p className="text-red-600 text-lg">{errors.customer_id.message}</p>}
             </div>
             <div className='h-14 mb-3'>
                 <label htmlFor="startAddress" className="block text-lg font-medium text-gray-700">
                     Motorista
                 </label>
-                <select className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg" {...register('driver_id')} name="use">
+                <select className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg" {...register('driver_id')} name="driver_id">
                     {drivers?.map((item) => (
                         <option key={item.id} value={item.id}>
                             {item.name}

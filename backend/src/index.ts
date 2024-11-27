@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import router from './routes';
 import connectToDatabase from './config/database';
 import { checkDrivers } from './controllers/driversController';
+import { setMockRides } from './controllers/rideController';
 
 connectToDatabase();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use('/', router);
 checkDrivers();
+setMockRides();
 app.get('/', (req: Request, res: Response): Response => {
   return res.send(`Hello, World! ${process.env.PORT}`);
 })

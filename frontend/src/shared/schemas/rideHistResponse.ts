@@ -9,7 +9,8 @@ export interface Ride {
         id: number,
         name: string
     },
-    value: number
+    value: number,
+    createdAt: Date
 }
 
 export interface RideHistResponse {
