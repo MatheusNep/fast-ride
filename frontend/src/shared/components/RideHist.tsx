@@ -9,12 +9,14 @@ import { useReactTable, getCoreRowModel, ColumnDef, flexRender, } from "@tanstac
 import { Ride } from "../schemas/rideHistResponse";
 import Moment from 'react-moment'
 import { formatCurrency } from "../utils/formatCurrency";
+import { showErrorAlert } from "../utils/sweetalert";
+import { formatNumber } from "../utils/formatNumber";
 
 const columns: ColumnDef<Ride>[] = [
     {
       accessorKey: "createdAt",
       header: "Data e Hora",
-      cell: (createdAt) => <Moment date={new Date(createdAt.getValue() as string)}></Moment>
+      cell: (createdAt) => <Moment format="DD/MM/YYYY - hh:mm" date={new Date(createdAt.getValue() as string)}></Moment>
     },
     {
       accessorKey: "driver.name",
@@ -31,7 +33,7 @@ const columns: ColumnDef<Ride>[] = [
     {
       accessorKey: "distance",
       header: "Distância",
-      cell: (distance) => `${distance.getValue()} km`
+      cell: (distance) => `${formatNumber(distance.getValue() as number)} km`
     },
     {
       accessorKey: "duration",
@@ -49,7 +51,7 @@ const RideHist = () => {
     const [filters, setFilters] = useState({customer_id: "", driver_id: 0})
     const [tripData, setTripData] = useState<Ride[]>([]);
 
-    const {data: rideHist} = useRideHist({
+    const {data: rideHist, error} = useRideHist({
         params:{
             customer_id: filters.customer_id,
             driver_id: filters.driver_id
@@ -68,9 +70,11 @@ const RideHist = () => {
     };
 
     useEffect(() => {
-        console.log(rideHist);
         setTripData(rideHist?.rides ? rideHist?.rides : []);
-    }, [rideHist]);
+        if(error){
+            showErrorAlert("Tente novamente", error.message) 
+        }        
+    }, [rideHist, error]);
 
     const table = useReactTable({
         data: tripData,
@@ -79,10 +83,9 @@ const RideHist = () => {
     });
           
     return (
-        <div className="w-full h-full flex flex-col justify-center items-center bg-black/20 z-20">    
-            <h1>Pesquise o histórico de Viagens</h1>
+        <div className="w-full h-full flex flex-col justify-center items-center z-20">
             <RideHistForm onSubmit={handleRideHistFormSubmit} visibility={true} />
-            <div className="p-4">
+            <div className="px-4">
                 <table className="table-auto w-full border-collapse border border-gray-300">
                     <thead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -102,7 +105,7 @@ const RideHist = () => {
                     </thead>
                     <tbody>
                     {table.getRowModel().rows.map((row) => (
-                        <tr key={row.id} className="hover:bg-gray-50">
+                        <tr key={row.id} className="bg-gray-50 hover:bg-white">
                         {row.getVisibleCells().map((cell) => (
                             <td key={cell.id} className="border border-gray-300 px-4 py-2">
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -112,6 +115,11 @@ const RideHist = () => {
                     ))}
                     </tbody>
                 </table>
+                {
+                    !rideHist ?
+                    <div className="w-full flex flex-row justify-center">Nenhum registro encontrado</div>
+                    : <></>
+                }
             </div>
         </div>            
     );

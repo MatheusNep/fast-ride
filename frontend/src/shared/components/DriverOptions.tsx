@@ -23,9 +23,9 @@ const DriverOptions = ({drivers, onSelectDriver}: DriverOptionsProps) => {
             {drivers.map((item) => (
                 <div
                 key={item.id}
-                className="border rounded-lg shadow-lg p-4 hover:shadow-xl transition-shadow"
+                className="border rounded-lg shadow-lg p-4 hover:shadow-xl transition-shadow bg-white"
                 >
-                    <h2 className="text-lg font-semibold mb-2">{item.name}</h2>
+                    <h2 className="text-lg font-semibold mb-2">{item.id} - {item.name}</h2>
                     <p className="text-sm text-gray-600 mb-1">{item.description}</p>
                     <p className="text-sm font-medium text-gray-800 mb-1">
                         Veículo: {item.vehicle}
@@ -40,7 +40,7 @@ const DriverOptions = ({drivers, onSelectDriver}: DriverOptionsProps) => {
                         onClick={() => onSelectDriver(item.id, item.name, item.value)}
                         className="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
                     >
-                        Select
+                        Escolher
                     </button>
                 </div>
             ))}

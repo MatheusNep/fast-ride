@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const formSchema = z.object({
+export const formDirectionsSchema = z.object({
     id: z.string().refine((val) => val.trim() !== "", {
         message: "ID do usuário é obrigatório.",
     }),
@@ -12,4 +12,4 @@ export const formSchema = z.object({
     }),
 });
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormDirectionsData = z.infer<typeof formDirectionsSchema>;

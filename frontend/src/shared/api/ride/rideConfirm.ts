@@ -12,8 +12,8 @@ export const getRideConfirm = async (
       }
     );
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching ride save:', error);
-    throw new Error('Could not add a ride');
+    throw new Error(error.response.data.error_description);
   }
 };

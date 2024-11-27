@@ -16,8 +16,7 @@ export const getRideEstimate = async (
       }
     );
     return response.data;
-  } catch (error) {
-    console.error('Error fetching ride estimate:', error);
-    throw new Error('Could not fetch ride estimate');
+  } catch (error: any) {
+    throw new Error(error.response.data.error_description);
   }
 };

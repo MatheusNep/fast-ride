@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema, FormData } from '../schemas/directionsFormSchema';
+import { formDirectionsSchema, FormDirectionsData } from '../schemas/directionsFormSchema';
+import { useEffect } from "react";
 
 type FormProps ={
-    onSubmit: (data: FormData) => void
+    onSubmit: (data: FormDirectionsData) => void
     visibility?: boolean
 }
 
@@ -12,14 +13,26 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
       register,
       handleSubmit,
       control,
-      formState: { errors },
-    } = useForm<FormData>({
-      resolver: zodResolver(formSchema),
+      formState: { errors, isSubmitSuccessful },      
+      reset,
+    } = useForm<FormDirectionsData>({
+      resolver: zodResolver(formDirectionsSchema),
+      defaultValues:{
+        id: undefined,
+        destinationAddress: undefined,
+        startAddress: undefined
+      }
     });
+
+    useEffect(() => {
+        if(isSubmitSuccessful){
+            reset();
+        }
+    },[isSubmitSuccessful])
   
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-col gap-4 w-3/4 ${visibility ? '' : 'hidden'}`}>
-            <div className='h-14 mb-3'>
+        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-col w-3/4 gap-4 ${visibility ? '' : 'hidden'}`}>
+            <div className='mb-3'>
                 <label htmlFor="id" className="block text-lg font-medium text-gray-700">
                     ID do usuário
                 </label>
@@ -27,12 +40,13 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
                     type="text"
                     id="id"
                     {...register("id")}
-                    className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
+                    className="mt-1 block w-full px-2 py-2 rounded-md shadow-sm sm:text-lg"
                     placeholder='Id'
+                    defaultValue={''}
                 />
                 {errors.id && <p className="text-red-600 text-lg">{errors.id.message}</p>}
             </div>
-            <div className='h-14 mb-3'>
+            <div className='mb-3'>
                 <label htmlFor="startAddress" className="block text-lg font-medium text-gray-700">
                     Endereço de Origem
                 </label>
@@ -40,12 +54,13 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
                     type="text"
                     id="startAddress"
                     {...register("startAddress")}
-                    className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
+                    className="mt-1 block w-full px-2 py-2 rounded-md shadow-sm sm:text-lg"
                     placeholder='Av. Presidente Kenedy, 2299 - Jardim Marieta'
+                    defaultValue={''}
                 />
                 {errors.startAddress && <p className="text-red-600 text-lg">{errors.startAddress.message}</p>}
             </div>
-            <div className='h-14 mb-3'>
+            <div className='mb-3'>
                 <label htmlFor="destinationAddress" className="block text-lg font-medium text-gray-700">
                     Endereço de Destino
                 </label>
@@ -53,16 +68,17 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
                     type="text"
                     id="destinationAddress"
                     {...register("destinationAddress")}
-                    className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
+                    className="mt-1 block w-full px-2 py-2 rounded-md shadow-sm sm:text-lg"
                     placeholder='Av. Presidente Kenedy, 2299 - Jardim Marieta'
+                    defaultValue={''}
                 />
                 {errors.destinationAddress && <p className="text-red-600 text-lg">{errors.destinationAddress.message}</p>}
             </div>
             <button
             type="submit"
-            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-lg font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:bg-blue-500 focus:ring-offset-2"
             >
-                Enviar
+                Estimar valor
             </button>
         </form>
         
@@ -70,57 +86,3 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
 };
 
 export default DirectionsForm;
-
-
-
-// const DirectionsForm = () => {
-//     const [startAddress, setStartAddress] = useState<string>();
-//     const [destinationAddress, setDestinationAddress] = useState<string>();
-//     const [userId, setUserId] = useState<string>();
-
-//     const handleSubmit = () => {
-//         if(startAddress || destinationAddress || userId || startAddress !== '' || destinationAddress !== '' || userId !== ''){
-
-//         }
-//     }
-//     return (
-//         <div className="w-full h-full">
-//             <form onSubmit={handleSubmit} >
-//                 <div className="space-y-12">
-//                     <div className="border-b border-gray-900/10 pb-12">
-//                         <h2 className="text-base font-semibold text-gray-900">Profile</h2>
-//                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-//                         <input
-//                             type="text"
-//                             placeholder="Endereço de Partida"
-//                             value={startAddress}
-//                             onChange={(e) => setStartAddress(e.target.value)}
-//                             className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
-//                         />
-//                         <input
-//                             type="text"
-//                             placeholder="Endereço de Destino"
-//                             value={destinationAddress}
-//                             onChange={(e) => setDestinationAddress(e.target.value)}
-//                             className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
-//                         />
-//                         </div>
-//                     </div>
-//                 </div>
-//                 <div className="mt-6 flex items-center justify-end gap-x-6">
-//                     <button type="button" className="text-lg font-semibold text-gray-900">
-//                         Cancel
-//                     </button>
-//                     <button
-//                         type="submit"
-//                         className="rounded-md bg-indigo-600 px-3 py-2 text-lg font-semibold text-white shadow-sm hover:bg-indigo-500"
-//                     >
-//                         Save
-//                     </button>
-//                 </div>
-//             </form>
-//         </div>
-//     )
-// }
-
-// export { DirectionsForm }

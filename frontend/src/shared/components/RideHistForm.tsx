@@ -26,8 +26,8 @@ const RideHistForm = ({onSubmit, visibility=true}: RideHistFormProps) => {
     });
   
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-row gap-4 w-3/4 ${visibility ? '' : 'hidden'}`}>
-            <div className='h-14 mb-3'>
+        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-row w-3/4 justify-around items-end ${visibility ? '' : 'hidden'}`}>
+            <div className='mb-3 w-1/4'>
                 <label htmlFor="id" className="block text-lg font-medium text-gray-700">
                     ID do usuário
                 </label>
@@ -35,22 +35,23 @@ const RideHistForm = ({onSubmit, visibility=true}: RideHistFormProps) => {
                     type="text"
                     id="id"
                     {...register("customer_id")}
-                    className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg"
+                    className="mt-1 block w-full px-2 py-2 rounded-md shadow-sm sm:text-lg"
                     placeholder='Id'
+                    defaultValue={''}
                 />
                 {errors.customer_id && <p className="text-red-600 text-lg">{errors.customer_id.message}</p>}
             </div>
-            <div className='h-14 mb-3'>
+            <div className='mb-3 w-1/4'>
                 <label htmlFor="startAddress" className="block text-lg font-medium text-gray-700">
                     Motorista
                 </label>
-                <select className="mt-1 block w-full px-2 py-2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg" {...register('driver_id')} name="driver_id">
+                <select className="mt-1 block w-full px-2 py-2 rounded-md shadow-sm sm:text-lg" {...register('driver_id')} name="driver_id" defaultValue={0}>
                     {drivers?.map((item) => (
                         <option key={item.id} value={item.id}>
                             {item.name}
                         </option>
                     ))}
-                    <option key={0} value={0} defaultValue="">
+                    <option key={0} value={0}>
                         Todos
                     </option>
                 </select>
@@ -58,7 +59,7 @@ const RideHistForm = ({onSubmit, visibility=true}: RideHistFormProps) => {
             </div>            
             <button
             type="submit"
-            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="w-1/6 h-1/2 mb-3 mt-1 inline-flex justify-center items-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-lg font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
                 Filtrar
             </button>

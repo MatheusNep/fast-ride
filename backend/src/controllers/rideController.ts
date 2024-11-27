@@ -106,7 +106,7 @@ export const saveRide = async (req: Request, res: Response) => {
 
   if(checkError){
     console.log(checkError);
-    return res.status(400).json({error_code: "INVALID_DATA", error: 'Os dados fornecidos no corpo da requisição são inválidos' });
+    return res.status(400).json({error_code: "INVALID_DATA", error_description: 'Os dados fornecidos no corpo da requisição são inválidos' });
   }else{    
     const driver = await Driver.findOne({id: checkRide.driver.id});
     if(driver){
@@ -116,13 +116,13 @@ export const saveRide = async (req: Request, res: Response) => {
             success: true
           });
         }).catch(() => {
-          return res.status(500).json({ error: 'Failed to fetch directions' });
+          return res.status(500).json({ error_description: 'Failed to fetch directions' });
         })
       }else{
-        return res.status(406).json({error_code: "INVALID_DISTANCE", error: 'Quilometragem inválida para o motorista' });
+        return res.status(406).json({error_code: "INVALID_DISTANCE", error_description: 'Quilometragem inválida para o motorista' });
       }
     }else{
-      return res.status(404).json({error_code: "DRIVER_NOT_FOUND", error: 'Motorista não encontrado' });
+      return res.status(404).json({error_code: "DRIVER_NOT_FOUND", error_description: 'Motorista não encontrado' });
     }
     
   }  
@@ -135,13 +135,13 @@ export const getRides = async (req: Request, res: Response) => {
   const { driver_id } = req.query;
 
   if(!customer_id && !driver_id){
-    return res.status(401).json({error_code: "INVALID_DATA", error: 'Os dados fornecidos no corpo da requisição são inválidos' });
+    return res.status(401).json({error_code: "INVALID_DATA", error_description:'Os dados fornecidos no corpo da requisição são inválidos' });
   }
 
   if(driver_id && parseInt(driver_id as string) != 0){
     const drivers = await Driver.findOne({id: driver_id})
     if(!drivers){
-      return res.status(400).json({error_code: "INVALID_DRIVER", error: 'Motorista invalido' });
+      return res.status(400).json({error_code: "INVALID_DRIVER", error_description:'Motorista invalido' });
     }
   }
 
@@ -167,7 +167,7 @@ export const getRides = async (req: Request, res: Response) => {
       rides: ridesFind
     })
   }else{ 
-    return res.status(404).json({error_code: "NO_RIDES_FOUND", error: 'Nenhum registro encontrado' });     
+    return res.status(404).json({error_code: "NO_RIDES_FOUND", error_description:'Nenhum registro encontrado' });     
   }  
  
 };

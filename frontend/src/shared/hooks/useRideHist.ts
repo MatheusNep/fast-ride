@@ -15,7 +15,6 @@ export const RIDEHIST = 'RIDEHIST'
 
 function useRideHist({ params, options}: UseRideHistQueryArgs) {
   const queryFn = async () => {
-    console.log("PARAMS NO USERIDEHIST: ", params)
     if(params.customer_id == ''){
       return []
     }else {
