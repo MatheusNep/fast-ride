@@ -1,9 +1,6 @@
-import { Drivers } from "../schemas/drivers";
-import { FaStar } from "react-icons/fa";
 import RideHistForm from "./RideHistForm";
 import { RideHistFormData } from "../schemas/rideHistFormSchema";
-import { useForm } from "react-hook-form";
-import useRideHist, { RIDEHIST } from "../hooks/useRideHist";
+import useRideHist from "../hooks/useRideHist";
 import { useEffect, useState } from "react";
 import { useReactTable, getCoreRowModel, ColumnDef, flexRender, } from "@tanstack/react-table";
 import { Ride } from "../schemas/rideHistResponse";
@@ -33,7 +30,7 @@ const columns: ColumnDef<Ride>[] = [
     {
       accessorKey: "distance",
       header: "Distância",
-      cell: (distance) => `${formatNumber(distance.getValue() as number)} km`
+      cell: (distance) => `${formatNumber(Math.round(distance.getValue() as number * 100) / 100)} km`
     },
     {
       accessorKey: "duration",
@@ -42,12 +39,11 @@ const columns: ColumnDef<Ride>[] = [
     {
       accessorKey: "value",
       header: "Valor",
-      cell: (value) => formatCurrency(value.getValue() as number) 
+      cell: (value) => formatCurrency(Math.round(value.getValue() as number * 100) / 100)
     },
   ];
 
 const RideHist = () => {
-    const { getValues: getValuesRideHist, register: registerRideHist, handleSubmit: handleSubmitRideHist, reset: resetRideHist } = useForm<RideHistFormData>();
     const [filters, setFilters] = useState({customer_id: "", driver_id: 0})
     const [tripData, setTripData] = useState<Ride[]>([]);
 
@@ -59,13 +55,11 @@ const RideHist = () => {
     });
 
     const handleRideHistFormSubmit = async (data: RideHistFormData) => {
-        console.log(data);
         if(data.customer_id && data.driver_id){
             setFilters({
                 customer_id: data.customer_id,
                 driver_id: parseInt(data.driver_id)
             })
-            resetRideHist();
         }
     };
 
@@ -85,7 +79,7 @@ const RideHist = () => {
     return (
         <div className="w-full h-full flex flex-col justify-center items-center z-20">
             <RideHistForm onSubmit={handleRideHistFormSubmit} visibility={true} />
-            <div className="px-4">
+            <div className="w-full sm:w-3/4 xl:w-1/2">
                 <table className="table-auto w-full border-collapse border border-gray-300">
                     <thead>
                     {table.getHeaderGroups().map((headerGroup) => (

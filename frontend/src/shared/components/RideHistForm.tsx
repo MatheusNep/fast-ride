@@ -12,7 +12,6 @@ const RideHistForm = ({onSubmit, visibility=true}: RideHistFormProps) => {
     const {
       register,
       handleSubmit,
-      control,
       formState: { errors },
     } = useForm<RideHistFormData>({
       resolver: zodResolver(rideHistFormSchema),
@@ -26,7 +25,7 @@ const RideHistForm = ({onSubmit, visibility=true}: RideHistFormProps) => {
     });
   
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-row w-3/4 justify-around items-end ${visibility ? '' : 'hidden'}`}>
+        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-row w-full sm:w-3/4 xl:w-1/2 justify-between items-end ${visibility ? '' : 'hidden'}`}>
             <div className='mb-3 w-1/4'>
                 <label htmlFor="id" className="block text-lg font-medium text-gray-700">
                     ID do usuário

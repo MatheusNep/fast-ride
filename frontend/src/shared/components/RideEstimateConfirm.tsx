@@ -1,4 +1,4 @@
-import  {  useEffect, useRef, useState } from 'react';
+import  {  useRef, useState } from 'react';
 import { DirectionsRenderer, GoogleMap, LoadScript } from "@react-google-maps/api";
 import { RideEstimateResponse, RideRequest } from '../schemas/rideEstimateResponse';
 import { getRideEstimate } from '../api/ride/rideEstimate';
@@ -82,10 +82,11 @@ const RideEstimateConfirm = ({showRideHist}: RideEstimateConfirmProps) => {
           showSuccessAlert("Sucesso!", "A viagem foi salva!")
         }
         setDirectionsResponse(null);
+        showRideHist();
+        handleShowForm();
       } catch (error: any) {
         showErrorAlert("Erro", error.message)
       }      
-      showRideHist();
     }
     
   };
@@ -99,7 +100,7 @@ const RideEstimateConfirm = ({showRideHist}: RideEstimateConfirmProps) => {
     <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_API_KEY!} libraries={['geometry', 'drawing']}>
       <div className="w-full h-full flex flex-col justify-center items-center z-20">
         <DirectionsForm onSubmit={handleFormSubmit} visibility={!showMap}/>     
-        <div className={`flex flex-col items-center w-3/4 ${showMap ? '' : 'hidden'} `}>
+        <div className={`flex flex-col items-center w-full sm:w-3/4 xl:w-1/2 2xl:w-[40%] px-10 ${showMap ? '' : 'hidden'} `}>
           <GoogleMap
             mapContainerStyle={{ width: "100%", height: "500px" }}
             center={mapCenter} 
@@ -112,8 +113,8 @@ const RideEstimateConfirm = ({showRideHist}: RideEstimateConfirmProps) => {
                 options={{ suppressMarkers: true, suppressPolylines: true }}                
               />}
           </GoogleMap>
-          <div className="p-6 w-full">
-            <h1 className="text-2xl font-bold mb-6">Motoristas Disponíveis</h1>
+          <div className="w-full">
+            <h1 className="text-2xl font-bold mb-6 mt-4">Motoristas Disponíveis</h1>
             {
               locationData?.options && locationData?.options.length > 0 ?          
                 <DriverOptions drivers={locationData?.options} onSelectDriver={handleSelectDriver}></DriverOptions>                        

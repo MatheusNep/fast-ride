@@ -26,19 +26,7 @@ export const getDrivers = async (req: Request, res: Response) => {
  
 };
 
-const drivers = [
-    {
-      id: 1,
-      name: 'Homer Simpson',
-      description: 'Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).',
-      vehicle: 'Plymouth Valiant 1973 rosa e enferrujado',
-      review: {
-        rating: 2,
-        comment: 'Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.'
-      },
-      value: 2.5,
-      limit: 1
-    },
+const drivers = [    
     {
       id: 2,
       name: 'Dominic Toretto',
@@ -50,6 +38,18 @@ const drivers = [
       },
       value: 5,
       limit: 5
+    },
+    {
+      id: 1,
+      name: 'Homer Simpson',
+      description: 'Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).',
+      vehicle: 'Plymouth Valiant 1973 rosa e enferrujado',
+      review: {
+        rating: 2,
+        comment: 'Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.'
+      },
+      value: 2.5,
+      limit: 1
     },
     {
       id: 3,

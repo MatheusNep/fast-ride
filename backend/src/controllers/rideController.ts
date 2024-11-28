@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { Client, DirectionsResponse, TravelMode } from '@googlemaps/google-maps-services-js';
-import Ride, { rideMock } from '../schemas/ride';
+import Ride from '../schemas/ride';
 import Driver, { DriverInterface } from '../schemas/driver';
 
 
@@ -44,17 +44,22 @@ export const estimateRide = async (req: Request, res: Response) => {
     const distance = route.legs[0].distance.value/1000; 
     const duration = route.legs[0].duration.text;
 
-    const drivers = await Driver.aggregate([{
-      $project: {
-        name: 1,
-        id: 1,
-        description: 1,
-        vehicle: 1,
-        review: 1,
-        value: { $multiply: ["$value", distance] },
-        limit: 1
+    const drivers = await Driver.aggregate([
+      {
+        $project: {
+          name: 1,
+          id: 1,
+          description: 1,
+          vehicle: 1,
+          review: 1,
+          value: { $multiply: ["$value", distance] },
+          limit: 1
+        }
+      },
+      {
+        $sort: {value: 1}
       }
-    }]);
+    ]);
 
     const options: DriverInterface[] = []
 
@@ -93,7 +98,7 @@ export const estimateRide = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Error fetching directions:', error);
-    return res.status(500).json({ error: 'Failed to fetch directions' });
+    return res.status(500).json({error_code: "INVALID_ROTE", error_description: 'Rota não encontrada, insira endereço válido' });
   }
 };
 
@@ -171,21 +176,4 @@ export const getRides = async (req: Request, res: Response) => {
   }  
  
 };
-
-
-export const setMockRides = async () =>{
-  const rides = rideMock;
-  try{
-      const existRides = await Ride.find({})
-      if(existRides.length < 10){
-          const createRides = await Ride.insertMany(rides);
-          return console.log(createRides);
-      }else{
-          return console.log({message: "Drivers já Criados"})
-      }
-
-  } catch (error) {
-      return console.log({ error: 'Erro ao adicionar motoristas.', details: error });
-  }
-}
 

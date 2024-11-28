@@ -1,5 +1,6 @@
 import { Drivers } from "../schemas/drivers";
 import { FaStar } from "react-icons/fa";
+import { formatCurrency } from "../utils/formatCurrency";
 
 type DriverOptionsProps = {
     drivers: Drivers[]
@@ -34,7 +35,7 @@ const DriverOptions = ({drivers, onSelectDriver}: DriverOptionsProps) => {
                         {renderStars(Math.round(item.review.rating))}
                     </div>
                     <p className="text-lg text-gray-600">
-                        <span className="font-medium">Preço:</span> R${item.value.toFixed(2).replace(".", ",")}
+                        <span className="font-medium">Preço:</span> {formatCurrency(Math.round(item.value * 100) / 100)}
                     </p>
                     <button
                         onClick={() => onSelectDriver(item.id, item.name, item.value)}

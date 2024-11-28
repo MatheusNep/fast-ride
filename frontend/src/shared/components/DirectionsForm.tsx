@@ -12,7 +12,6 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
     const {
       register,
       handleSubmit,
-      control,
       formState: { errors, isSubmitSuccessful },      
       reset,
     } = useForm<FormDirectionsData>({
@@ -31,7 +30,7 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
     },[isSubmitSuccessful])
   
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-col w-3/4 gap-4 ${visibility ? '' : 'hidden'}`}>
+        <form onSubmit={handleSubmit(onSubmit)} className={`flex flex-col w-full sm:w-3/4 xl:w-1/2 2xl:w-[40%] gap-4 ${visibility ? '' : 'hidden'}`}>
             <div className='mb-3'>
                 <label htmlFor="id" className="block text-lg font-medium text-gray-700">
                     ID do usuário
@@ -41,7 +40,7 @@ const DirectionsForm = ({onSubmit, visibility=true}: FormProps) => {
                     id="id"
                     {...register("id")}
                     className="mt-1 block w-full px-2 py-2 rounded-md shadow-sm sm:text-lg"
-                    placeholder='Id'
+                    placeholder='ID do usuário'
                     defaultValue={''}
                 />
                 {errors.id && <p className="text-red-600 text-lg">{errors.id.message}</p>}

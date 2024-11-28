@@ -23,15 +23,15 @@ function App() {
           <h1 className="text-2xl font-bold">Fast Ride</h1>
         </div>
         <div className='w-3/4 h-full flex flex-row items-between justify-center'>          
-          <button onClick={handleShowRideEstimateConfirm} className="text-white hover:underline me-4">
+          <button onClick={handleShowRideEstimateConfirm} className="py-2 px-4 text-xl text-white sm:me-16">
             Nova Viagem
           </button>
-          <button onClick={handleShowRideHist} className="text-white hover:underline">
+          <button onClick={handleShowRideHist} className="py-2 px-4 text-xl text-white">
             Histórico de Viagens
           </button>
         </div>
       </header>
-      <main className="flex-1 my-20 mx-10 h-auto bg-gray-300 shadow rounded-lg">
+      <main className="flex-1 mb-20 mt-24 mx-10 h-auto bg-gray-300 shadow rounded-lg">
         <section className={`mb-6 p-3 ${showRideEstimateConfirm ? '' : 'hidden'}`}>
           <h2 className="text-xl font-semibold text-gray-700 mb-1">Nova Viagem</h2>
           <div className="p-4">
